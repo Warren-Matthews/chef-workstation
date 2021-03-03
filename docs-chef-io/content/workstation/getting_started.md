@@ -29,7 +29,6 @@ If you do not have Chef Workstation installed, start with the [installation guid
 
 1. [Download and install Chef Workstation]({{< relref "install_workstation.md" >}})
 1. A running instance of [Chef Infra Server]({{< relref "server/install_server.md" >}}) or [Hosted Chef Server](https://manage.chef.io/signup) and access to the:
-   1. `ORGANIZATION-validator.pem`
    1. `USER.pem`
 1. Install a [Code Editor]({{< relref "#Code Editors" >}}) (optional)
 
@@ -166,9 +165,8 @@ The easiest setup is to replace your server's custom certificate with one signed
 
 Setting up Chef Workstation to trust the server's self-signed certificates you can use the `knife ssl fetch` subcommand to download the TLS/SSL certificate from the Chef Infra Server:
 
-To set up Chef Workstation to communicate with your Chef Infra Server, you need the to download the following files in your `~.chef` directory:
+To set up Chef Workstation to communicate with your Chef Infra Server, you need the to download the following file in your `~.chef` directory:
 
-* The ORGANIZATION-validator.pem
 * USER.pem
 
 The steps for downloading or generating these files vary depending on how you interact with Chef Infra Server. Select the option that best describes how you interact with the server:
@@ -180,12 +178,11 @@ The steps for downloading or generating these files vary depending on how you in
 
 If you interact with your Chef Infra Server from the command line, then you will need to:
 
-* Retrieve the organization and user private keys--the `ORGANIZATION-validator.pem` and `USER.pem` files--from your Chef Infra server and save these certificate files in your Chef directory
+* Retrieve your user private key, the `USER.pem` file, from your Chef Infra server and save it in your Chef directory
 * Configure the `knife` tool
 * Use `knife` to download and save your server's digital certificates
 
-Download the `ORGANIZATION-validator.pem` and `USER.pem` files from the
-Chef Infra Server and move them to the `.chef` directory.
+Download the `USER.pem` files from the Chef Infra Server and move them to the `.chef` directory.
 
 #### Move Key Files
 
@@ -214,11 +211,9 @@ Prerequisites:
   # scp remote_username@192.0.2.0:/remote/file.txt /local/directory
   # scp remote_username@FQDN:/remote/file.txt /local/directory
 
-  scp user_name@chef-server.test:/remote/ORGANIZATION-validator.pem ~/.chef
   scp user_name@chef-server.test:/remote/USER.pem ~/.chef
 
   # For example:
-  scp tbuchatar@chef-server.test:/remote/4thcafe-validator.pem ~/.chef
   scp tbuchatar@chef-server.test:/remote/tbuchatar.pem ~/.chef
   ```
 
@@ -231,11 +226,9 @@ Prerequisites:
   # Copy-Item Syntax
   # Copy-Item –Path "C:\Folder1\file1.txt" –Destination 'D:\' –ToSession (New-PSSession -Credential PSCredential –ComputerName CHEFSERVER_FQDN)
 
-  Copy-Item –Path "D:\remote\ORGANIZATION-validator.pem" –Destination "C:\chef\"
   Copy-Item –Path "D:\remote\USER.pem" –Destination "C:\chef\"
 
   # For example:
-  Copy-Item –Path "D:\remote\4thcafe-validator.pem" –Destination "C:\chef\"
   Copy-Item –Path "D:\remote\tbuchatar.pem" –Destination "C:\chef\"
   ```
 
@@ -274,8 +267,6 @@ details.
   log_location             STDOUT
   node_name                'node_name'
   client_key               "#{current_dir}/USER.pem"
-  validation_client_name   'ORG_NAME-validator'
-  validation_key           "#{current_dir}/ORGANIZATION-validator.pem"
   chef_server_url          'https://api.chef.io/organizations/ORG_NAME'
   cache_type               'BasicFile'
   cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
@@ -288,8 +279,6 @@ details.
   ``` ruby
   client_name     = 'tbuchatar'
   client_key      = 'tbuchatar.pem'
-  validation_client_name   '4thcafe-validator'
-  validation_key           "4thcafe-validator.pem"
   chef_server_url = 'https://${chef_server_fqdn}/organizations/4thcafe'
   # ssl_ca_path = "/etc/ssl/certs"
   # ssl_ca_file = "/etc/ssl/certs/ca.pem"
@@ -334,12 +323,11 @@ Infra Server (including the hosted Chef Infra Server), log on and
 download the following files:
 
 * Download the `config.rb` from the **Organizations** page.
-* Download the `ORGANIZATION-validator.pem` from the **Organizations** page.
 * Download the `USER.pem` from the **Change Password** section of the **Account Management** page.
 
 #### Move Keys and Configuration Files into the Chef Directory
 
-After downloading the  `config.rb`, `ORGANIZATION-validator.pem`, and `USER.pem` files from the Chef Infra Server, move them to the Chef directory on your computer. The Chef directory is `~/.chef` on macOS and Linux systems and `C:\\chef` on Windows.
+After downloading the  `config.rb` and `USER.pem` files from the Chef Infra Server, move them to the Chef directory on your computer. The Chef directory is `~/.chef` on macOS and Linux systems and `C:\\chef` on Windows.
 <!---* Tabs Section--->
 {{< foundation_tabs tabs-id="tabs-panel-container" >}}
 {{< foundation_tab active="true" panel-link="webui-macOS-panel" tab-text="macOS/Linux">}}
@@ -358,12 +346,6 @@ Move files to the `.chef` directory on macOS and Linux systems:
 
     ``` bash
     cp /path/to/config.rb ~/.chef
-    ```
-
-    and:
-
-    ``` bash
-    cp /path/to/ORGANIZATION-validator.pem ~/.chef
     ```
 
     and:
@@ -390,12 +372,6 @@ Move files to the `C:\chef` directory on macOS and Linux systems:
 
     ```powershell
     Move-Item -Path C:\path\to\config.rb -Destination C:\chef\
-    ```
-
-    and:
-
-    ```powershell
-    Move-Item -Path C:\path\to\ORGANIZATION-validator.pem -Destination C:\chef\
     ```
 
     and:
