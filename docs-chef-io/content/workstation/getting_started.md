@@ -14,139 +14,112 @@ aliases = ["/workstation_setup.html", "/chefdk_setup.html", "/workstation.html",
     weight = 40
 +++
 
-This guide walks your through the four parts to set up Chef Workstation on your computer.
+This guide contains common configuration options used when setting up a
+new Chef Workstation installation. If you do not have Chef Workstation
+installed, see its [installation guide](/workstation/install_workstation/)
+before proceeding further.
 
-* [Setup Ruby for Chef Workstation]({{< relref "#Setup Ruby for Chef Workstation" >}})
-* [Set up your chef-repo]({{< relref "#Setup Your Chef Repo" >}}) for storing your cookbooks
-* [Understand your Chef Workstation installation]({{< relref "#Your Chef Workstation Installation" >}})
-* [Set Up Chef Infra Communication]({{< relref "#Set Up Chef Infra Communications" >}})
+## Configure Ruby Environment
 
-In order to use Chef Workstation effectively, you need to install and set up [Chef Infra Server]({{< relref "/server/install_server.md" >}}) first.
+For many users of Chef, the version of Ruby that is included in Chef
+Workstation should be configured as the default version of Ruby on your
+system.
 
-If you do not have Chef Workstation installed, start with the [installation guide]({{< relref "/workstation/install_workstation.md" >}}).
+{{< note >}}
 
-## Prerequisites
+These instructions are intended for macOS and Linux users. On Windows Chef Workstation includes a desktop shortcut to a PowerShell prompt already configured for use.
 
-1. [Download and install Chef Workstation]({{< relref "install_workstation.md" >}})
-1. A running instance of [Chef Infra Server]({{< relref "server/install_server.md" >}}) or [Hosted Chef Server](https://manage.chef.io/signup) and access to the:
-   1. `USER.pem`
-1. Install a [Code Editor]({{< relref "#Code Editors" >}}) (optional)
+{{< /note >}}
 
-## Setup Ruby for Chef Workstation
-
-While you don't have to know the Ruby programming language to use Chef, you do need to make sure that your computer knows where to find Ruby in order to run.
-
-* If you don't plan on writing a lot of Chef cookbooks and you're not a Ruby developer, then we recommend that you use the [Chef Workstation Ruby as the system default]({{< relref "#Use Chef-Workstation Ruby as the System Default">}})
-* If you are a Ruby developer, then set up Ruby with an [environment variable]({{< relref "#Add Ruby as an Environment Variable" >}}).
-
-### Use Chef Workstation Ruby as the System Default ¸
-<!---* Tabs Section--->
-{{< foundation_tabs tabs-id="tabs-panel-container" >}}
-{{< foundation_tab active="true" panel-link="ruby-macOS-panel" tab-text="macOS/Linux">}}
-{{< foundation_tab panel-link="ruby-windows-panel" tab-text="Windows" >}}
-{{< /foundation_tabs >}}
-<!---* End Tabs --->
-
-<!---* Panels Section --->
-{{< foundation_tabs_panels tabs-id="tabs-panel-container" >}}
-{{< foundation_tabs_panel active="true" panel-id="ruby-macOS-panel" >}}
-
-1. Open a terminal and enter:
+1. Open a terminal and enter the following:
 
     ``` bash
     which ruby
     ```
 
-    It should return something like `/usr/bin/ruby`.
+    which will return something like `/usr/bin/ruby`.
 
-1. Set up the Chef Workstation Ruby the default on your system by editing the `$PATH` environment variables to include paths to Chef Workstation.
-
-    On Linux systems with Bash as the default shell, run:
+2. To use Chef Workstation-provided Ruby as the default Ruby on your system, edit the `$PATH` and `GEM` environment variables to include paths to Chef Workstation. For example, on a machine that runs Bash, run:
 
     ``` bash
-    echo 'eval "$(chef shell-init bash)"' >> ~/.bashrc
+    echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
     ```
 
-    where `bash` and `~/.bashrc` represents the name of the shell.
+    where `bash` and `~/.bash_profile` represents the name of the shell.
 
-    On macOS systems with Zsh as the default shell, run:
+    If zsh is your preferred shell then run the following:
 
     ``` bash
     echo 'eval "$(chef shell-init zsh)"' >> ~/.zshrc
     ```
 
-1. Confirm the Ruby installation:
+3. Run `which ruby` again. It should return
+    `/opt/chef-workstation/embedded/bin/ruby`.
 
-   ``` bash
-   which ruby
-   ```
+{{< note >}}
 
-   should return:
+Using Chef Workstation-provided Ruby as your system Ruby is optional.
+For many users, Ruby is primarily used for authoring Chef cookbooks. If
+that's true for you, then using the Chef Workstation-provided Ruby is
+recommended.
 
-   ``` bash
-   /opt/chef-workstation/embedded/bin/ruby`
-   ```
+{{< /note >}}
 
-{{< /foundation_tabs_panel >}}
-{{< foundation_tabs_panel panel-id="ruby-windows-panel" >}}
+## Add Ruby to $PATH
 
-Chef Workstation on Windows includes a desktop shortcut to a PowerShell prompt with Ruby pre-configured.
+Chef Infra Client includes a stable version of Ruby as part of its
+installer. The path to this version of Ruby must be added to the `$PATH`
+environment variable and saved in the configuration file for the command
+shell (Bash, csh, and so on) that is used on the machine running Chef
+Workstation. In a command window, type the following:
 
-{{< /foundation_tabs_panel >}}
+``` bash
+echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.configuration_file && source ~/.configuration_file
+```
 
-{{< /foundation_tabs_panels >}}
-<!---* End Panels --->
-### Add Ruby as an Environment Variable
+where `configuration_file` is the name of the configuration file for the
+specific command shell. For example, if Bash were the command shell and
+the configuration file were named `bash_profile`, the command would look
+something like the following:
 
-Chef Workstation includes a stable version of Ruby as part of its installer.
-To add the Chef Ruby as an environment variable, add the path to the Chef Ruby to the `$PATH` environment variable and save it in the configuration file for the command shell.
+``` bash
+echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.bash_profile && source ~/.bash_profile
+```
 
-<!---* Tabs Section--->
-{{< foundation_tabs tabs-id="tabs-panel-container" >}}
-{{< foundation_tab active="true" panel-link="ruby-env-macOS-panel" tab-text="macOS/Linux">}}
-{{< foundation_tab panel-link="ruby-env-windows-panel" tab-text="Windows" >}}
-{{< /foundation_tabs >}}
-<!---* End Tabs --->
-
-<!---* Panels Section --->
-{{< foundation_tabs_panels tabs-id="tabs-panel-container" >}}
-{{< foundation_tabs_panel active="true" panel-id="ruby-env-macOS-panel" >}}
-
-  On Linux systems with Bash as the default shell, your configuration file is called `.bashrc`. The command for adding the Chef Ruby path to your `.bashrc` file is:
-
-  ``` bash
-  echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
-  ```
-
-  On macOS systems with Zsh as the default shell, If you use Zsh as your command shell, your configuration file is called `.zshrc`. The command for adding the Chef Ruby path to your `.zshrc` file is:
-
-  ``` bash
-  echo 'export PATH="/opt/chef-workstation/embedded/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
-  ```
-
-{{< /foundation_tabs_panel >}}
-{{< foundation_tabs_panel panel-id="ruby-env-windows-panel" >}}
 {{< warning >}}
 
-  On Microsoft Windows, `C:/opscode/Chef Workstation/bin` must be before `C:/opscode/Chef Workstation/embedded/bin` in the `PATH`.
+On Microsoft Windows, `C:/opscode/Chef Workstation/bin` must be before
+`C:/opscode/Chef Workstation/embedded/bin` in the `PATH`.
 
 {{< /warning >}}
-{{< /foundation_tabs_panel >}}
 
-{{< /foundation_tabs_panels >}}
+## Create the Chef repository
 
-## Setup Your Chef Repo
-
-{{% chef_repo_description %}}
-
-If you're setting up Chef for the very first time **in your organization**, then you will need a Chef repository for saving your cookbooks and other work.
-
-Use the [chef generate repo]({{< relref "ctl_chef.md#chef-generate-repo" >}}) command to create your Chef repository. For example, to create a repository called
+Use [the chef generate repo]({{< relref "ctl_chef.md#chef-generate-repo" >}}) to
+create the Chef repository. For example, to create a repository called
 `chef-repo`:
 
 ``` bash
 chef generate repo chef-repo
 ```
+
+### Install a Code Editor
+
+A good visual code editor is not a requirement for working with Chef
+Infra, but a good code editor can save you time. A code editor should
+support the following: themes, plugins, snippets, syntax Ruby code
+coloring/highlighting, multiple cursors, a tree view of the entire
+folder/repository you are working with, and a Git integration.
+
+These are a few common editors:
+
+- [Visual Studio Code (free/open source)](http://code.visualstudio.com)
+- [GitHub Atom - (free/open source)](http://atom.io)
+
+Chef Infra support in editors:
+
+- [VSCode Chef Infra Extension](https://marketplace.visualstudio.com/items?itemName=chef-software.Chef)
+- [Chef on Atom](https://atom.io/packages/language-chef)
 
 ## Your Chef Workstation Installation
 
@@ -194,14 +167,14 @@ Prerequisites:
 * The user name on the Chef Infra Server
 * The password for the Chef Infra Server
 
-<!---* Tabs Section--->
+<!----Tabs Section--->
 {{< foundation_tabs tabs-id="tabs-panel-container" >}}
 {{< foundation_tab active="true" panel-link="key-move-nix" tab-text="macOS/Linux">}}
 {{< foundation_tab panel-link="key-move-win" tab-text="Windows" >}}
 {{< /foundation_tabs >}}
-<!---* End Tabs --->
+<!----End Tabs --->
 
-<!---* Panels Section --->
+<!----Panels Section --->
 {{< foundation_tabs_panels tabs-id="tabs-panel-container" >}}
 {{< foundation_tabs_panel active="true" panel-id="key-move-nix" >}}
   macOS and Linux systems use the Secure Copy Protocol (SCP) to transfer files securely between local and remote systems. Download the key and configuration files:
@@ -250,14 +223,14 @@ appropriate values:
 See the [knife config.rb documentation](/workstation/config_rb/) for more
 details.
 
-<!---* Tabs Section--->
+<!----Tabs Section--->
 {{< foundation_tabs tabs-id="tabs-panel-container" >}}
 {{< foundation_tab active="true" panel-link="knife-config-example" tab-text="Example config.rb">}}
 {{< foundation_tab panel-link="knife-config-demo" tab-text="Completed config.rb" >}}
 {{< /foundation_tabs >}}
-<!---* End Tabs --->
+<!----End Tabs --->
 
-<!---* Panels Section --->
+<!----Panels Section --->
 {{< foundation_tabs_panels tabs-id="tabs-panel-container" >}}
 {{< foundation_tabs_panel active="true" panel-id="knife-config-example" >}}
 
@@ -328,15 +301,15 @@ download the following files:
 #### Move Keys and Configuration Files into the Chef Directory
 
 After downloading the  `config.rb` and `USER.pem` files from the Chef Infra Server, move them to the Chef directory on your computer. The Chef directory is `~/.chef` on macOS and Linux systems and `C:\\chef` on Windows.
-<!---* Tabs Section--->
+<!----Tabs Section--->
 {{< foundation_tabs tabs-id="tabs-panel-container" >}}
 {{< foundation_tab active="true" panel-link="webui-macOS-panel" tab-text="macOS/Linux">}}
 {{< foundation_tab panel-link="webui-win-panel" tab-text="Windows" >}}
 
 {{< /foundation_tabs >}}
-<!---* End Tabs --->
+<!----End Tabs --->
 
-<!---* Panels Section --->
+<!----Panels Section --->
 {{< foundation_tabs_panels tabs-id="tabs-panel-container" >}}
 {{< foundation_tabs_panel active="true" panel-id="webui-macOS-panel" >}}
 
