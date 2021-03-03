@@ -195,15 +195,15 @@ Prerequisites:
 
   Windows system uses PowerShell through the Remote Desktop Protocol (RDP) to transfer items securely. Connect to the server using RDP and download the key and configuration files:
 
-    ```powershell
-    # Copy-Item Syntax
-    # Copy-Item –Path "C:\Folder1\file1.txt" –Destination 'D:\' –ToSession  (New-PSSession-Credential PSCredential –ComputerName CHEFSERVER_FQDN)
-  
-    Copy-Item –Path "D:\remote\USER.pem" –Destination "C:\chef\"
-  
-    # For example:
-    Copy-Item –Path "D:\remote\tbuchatar.pem" –Destination "C:\chef\"
-    ```
+  ```powershell
+  # Copy-Item Syntax
+  # Copy-Item -Path "C:\Folder1\file1.txt" -Destination 'D:\' -ToSession  (New-PSSession-Credential PSCredential -ComputerName CHEFSERVER_FQDN)
+
+  Copy-Item -Path "D:\remote\USER.pem" -Destination "C:\chef\"
+
+  # For example:
+  Copy-Item -Path "D:\remote\tbuchatar.pem" -Destination "C:\chef\"
+  ```
 
 {{< /foundation_tabs_panel >}}
 {{< /foundation_tabs_panels >}}
